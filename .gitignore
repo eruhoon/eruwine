@@ -1,0 +1,14 @@
+# Operating System
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Temporary & Local Developer Workspace Files
+temp/
+log.txt
+*.log
+
+# Node dependencies
+node_modules/
+npm-debug.log*

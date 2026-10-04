@@ -1,0 +1,38 @@
+# Eruwine Universal PortMaster Gamepad Configuration Template
+# Target Runtime: gptokeyb
+
+back = pageup
+start = esc
+
+a = mouse_left
+b = mouse_right
+x = space
+y = leftctrl
+
+l1 = s
+l2 = enter
+r1 = l
+r2 = mouse_left
+
+up = up
+down = down
+left = left
+right = right
+
+left_analog_up = mouse_movement_up
+left_analog_down = mouse_movement_down
+left_analog_left = mouse_movement_left
+left_analog_right = mouse_movement_right
+
+right_analog_up = mouse_wheel_up
+right_analog_down = mouse_wheel_down
+right_analog_left = left
+right_analog_right = right
+
+# Mouse sensitivity and deadzone tuning
+deadzone_mode = scaled_radial
+deadzone = 2000
+deadzone_scale = 8
+deadzone_delay = 16
+mouse_scale = 6
+mouse_delay = 16

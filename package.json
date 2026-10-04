@@ -1,0 +1,22 @@
+{
+  "name": "eruwine-framework",
+  "version": "1.0.0",
+  "description": "Universal Eruwine PortMaster Runtime & Port Template Framework for Windows Games on Linux ARM64",
+  "main": "scripts/build.mjs",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/test.mjs"
+  },
+  "keywords": [
+    "eruwine",
+    "portmaster",
+    "wine",
+    "box64",
+    "rocknix",
+    "arm64",
+    "handheld"
+  ],
+  "author": "Antigravity / Eruhoon",
+  "license": "MIT"
+}
