@@ -22,26 +22,27 @@ Powered by **Box64** CPU dynamic recompiler and **Wine64 New WoW64**, Eruwine al
 
 ## 🛠️ Development & Build Commands
 
-This project uses **Node.js (v20+)** for building and test automation.
+This project uses **pnpm** and **Node.js (v20+)** for building and test automation.
 
 ### 1. Run Automated Test Suite
 ```bash
-npm test
+pnpm test
 # Or: node scripts/test.mjs
 ```
 
 ### 2. Build Release Distribution Package
 ```bash
-npm run build
+pnpm run build
 # Or: node scripts/build.mjs
 ```
-Generates ready-to-copy template files in `dist/eruwine.sh` and `dist/eruwine/`.
+Generates ready-to-copy template files in `dist/eruwine.sh`, `dist/eruwine/`, and distribution zip archives `dist/eruwine-v*.zip` & `dist/eruwine.zip`.
 
 ---
 
 ## 📖 Documentation & Guides
 
 - **[HOW_TO_USE.md](HOW_TO_USE.md)**: Quick start guide for creating game ports.
+- **[GEMINI.md](GEMINI.md)**: Project versioning (`Major.Minor.Patch.Revision`), commit conventions, and CI/CD rules.
 
 ---
 

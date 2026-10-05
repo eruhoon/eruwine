@@ -4,14 +4,15 @@
 .LSOverride
 Thumbs.db
 
+# Build outputs
+dist/
+*.zip
+
+# Dependencies
+node_modules/
+npm-debug.log*
+
 # Temporary & Local Developer Workspace Files
 temp/
 log.txt
 *.log
-
-# Node dependencies
-node_modules/
-npm-debug.log*
-
-# Archives
-*.zip
