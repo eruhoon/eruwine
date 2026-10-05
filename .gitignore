@@ -12,3 +12,6 @@ log.txt
 # Node dependencies
 node_modules/
 npm-debug.log*
+
+# Archives
+*.zip

@@ -24,11 +24,36 @@ source "$controlfolder/control.txt" 2>/dev/null || true
 get_controls
 
 # --- Directory Resolution ---
-PORT_NAME="$(basename "$0" .sh)"
-if [ -n "$directory" ] && [ -d "/$directory/ports/$PORT_NAME" ]; then
-  GAMEDIR="/$directory/ports/$PORT_NAME"
+# 1. Custom folder name override (Optional: specify port folder name directly)
+# PORT_DIR="FARLANDODYSSEY"
+
+PORT_NAME="${PORT_DIR:-$(basename "$0" .sh)}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Search candidate locations
+GAMEDIR=""
+if [ -n "$PORT_DIR" ]; then
+  CANDIDATES=("$PORT_DIR")
 else
-  GAMEDIR="$(cd "$(dirname "$0")/$PORT_NAME" && pwd)"
+  # Default candidates: exact match, stripped spaces, lowercase, lowercase without spaces
+  NAME_NOSPACE="${PORT_NAME// /}"
+  NAME_LOWER="$(echo "$PORT_NAME" | tr '[:upper:]' '[:lower:]')"
+  NAME_LOWER_NOSPACE="$(echo "$NAME_NOSPACE" | tr '[:upper:]' '[:lower:]')"
+  CANDIDATES=("$PORT_NAME" "$NAME_NOSPACE" "$NAME_LOWER" "$NAME_LOWER_NOSPACE")
+fi
+
+for cand in "${CANDIDATES[@]}"; do
+  if [ -n "$directory" ] && [ -d "/$directory/ports/$cand" ]; then
+    GAMEDIR="/$directory/ports/$cand"
+    break
+  elif [ -d "$SCRIPT_DIR/$cand" ]; then
+    GAMEDIR="$SCRIPT_DIR/$cand"
+    break
+  fi
+done
+
+if [ -z "$GAMEDIR" ] || [ ! -d "$GAMEDIR" ]; then
+  GAMEDIR="$SCRIPT_DIR/$PORT_NAME"
 fi
 
 cd "$GAMEDIR"
@@ -103,11 +128,11 @@ trap cleanup EXIT INT TERM
 GPTK_PATH="$GAMEDIR/$GPTK_FILE"
 if [ -f "$GPTK_PATH" ]; then
   if [ -n "$GPTOKEYB" ]; then
-    echo "[INFO] Launching gptokeyb with $GPTK_PATH"
-    $GPTOKEYB "$GAME_ID" -c "$GPTK_PATH" &
+    echo "[INFO] Launching gptokeyb with $GPTK_PATH targeting $TARGET_EXE"
+    $GPTOKEYB "$TARGET_EXE" -c "$GPTK_PATH" &
   elif command -v gptokeyb >/dev/null 2>&1; then
-    echo "[INFO] Launching system gptokeyb with $GPTK_PATH"
-    gptokeyb "$GAME_ID" -c "$GPTK_PATH" &
+    echo "[INFO] Launching system gptokeyb with $GPTK_PATH targeting $TARGET_EXE"
+    gptokeyb "$TARGET_EXE" -c "$GPTK_PATH" &
   fi
 fi
 
@@ -124,6 +149,11 @@ if [ ! -f /storage/eruwine-lib/winewayland.so ]; then
 fi
 grep -q '/usr/lib/wine/x86_64-unix/winewayland.so' /proc/mounts || mount --bind /storage/eruwine-lib/winewayland.so /usr/lib/wine/x86_64-unix/winewayland.so 2>/dev/null || true
 
+# 3. Patch win32u to prevent zombie user_lock deadlock on thread termination under Box64
+if [ -f /storage/eruwine-lib/win32u.so ]; then
+  grep -q '/usr/lib/wine/x86_64-unix/win32u.so' /proc/mounts || mount --bind /storage/eruwine-lib/win32u.so /usr/lib/wine/x86_64-unix/win32u.so 2>/dev/null || true
+fi
+
 # --- Environment & Library Search Paths ---
 export BOX64_LOG=0
 export BOX64_DYNAREC=1
@@ -133,6 +163,18 @@ export BOX64_DYNAREC_FASTNAN=1
 export BOX64_DYNAREC_X87DOUBLE=1
 export BOX64_DYNAREC_STRONGMEM=1
 export BOX64_SHOWSEGV=1
+
+# --- GPU Driver Override (Force Panfrost Mesa on libmali systems) ---
+if [ "$WINE_RENDERER" = "gl" ] || [ "$FORCE_PANFROST" = "1" ]; then
+  echo "[INFO] Enforcing Panfrost (Mesa) GPU Driver & DRI Backend..."
+  export MESA_LOADER_DRIVER_OVERRIDE=panfrost
+  export LIBGL_DRIVERS_PATH="/usr/lib/dri"
+  export GBM_BACKENDS_PATH="/usr/lib/gbm"
+  export GBM_BACKEND="dri"
+  export EGL_PLATFORM="wayland"
+  [ -d "/usr/lib/mesa" ] && export LD_LIBRARY_PATH="/usr/lib/mesa:$LD_LIBRARY_PATH"
+  [ -d "/usr/lib/panfrost" ] && export LD_LIBRARY_PATH="/usr/lib/panfrost:$LD_LIBRARY_PATH"
+fi
 
 export BOX64_LD_LIBRARY_PATH="$GAMEDIR/lib:/storage/eruwine-lib:/usr/share/box64/lib:/usr/lib/wine/x86_64-unix:$BOX64_LD_LIBRARY_PATH"
 export WINEDLLPATH="$GAMEDIR/bin:/usr/lib/wine/x86_64-windows:/usr/lib/wine/i386-windows:/usr/lib/wine/x86_64-unix"
