@@ -1,12 +1,13 @@
 {
   "name": "eruwine-framework",
-  "version": "0.1.1",
+  "version": "0.2.0.0",
   "description": "Universal Eruwine PortMaster Runtime & Port Template Framework for Windows Games on Linux ARM64",
   "main": "scripts/build.mjs",
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node scripts/test.mjs"
+    "test": "node scripts/test.mjs",
+    "check-version": "node scripts/check-version.mjs"
   },
   "keywords": [
     "eruwine",
