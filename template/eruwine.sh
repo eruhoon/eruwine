@@ -154,6 +154,11 @@ if [ -f /storage/eruwine-lib/win32u.so ]; then
   grep -q '/usr/lib/wine/x86_64-unix/win32u.so' /proc/mounts || mount --bind /storage/eruwine-lib/win32u.so /usr/lib/wine/x86_64-unix/win32u.so 2>/dev/null || true
 fi
 
+# 4. Patch libxkbregistry to fix XML DTD off-by-one parser bug
+if [ -f /storage/eruwine-lib/libxkbregistry.so.0 ]; then
+  grep -q '/usr/lib/libxkbregistry.so.0' /proc/mounts || mount --bind /storage/eruwine-lib/libxkbregistry.so.0 /usr/lib/libxkbregistry.so.0 2>/dev/null || true
+fi
+
 # --- Environment & Library Search Paths ---
 export BOX64_LOG=0
 export BOX64_DYNAREC=1
@@ -283,6 +288,17 @@ SWAY_TARGETS=("$TARGET_EXE" "${TARGET_EXE%.exe}" "$GAME_NAME" "${SWAY_FOCUS_TARG
     fi
 
     [ $FOCUSED -eq 1 ] && break
+  done
+) &
+
+# --- Attach gptokeyb virtual keyboard to seat0 (otherwise it lands on the touch fallback seat and Wine gets no key events) ---
+(
+  for i in $(seq 1 30); do
+    sleep 0.5
+    if swaymsg -t get_inputs 2>/dev/null | grep -q 'Fake_Keyboard'; then
+      swaymsg seat seat0 attach "4660:22136:Fake_Keyboard" >/dev/null 2>&1
+      break
+    fi
   done
 ) &
 

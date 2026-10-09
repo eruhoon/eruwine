@@ -1,8 +1,8 @@
 # Eruwine Universal PortMaster Gamepad Configuration Template
 # Target Runtime: gptokeyb
 
-back = pageup
-start = esc
+back = esc
+start = enter
 
 a = mouse_left
 b = mouse_right
