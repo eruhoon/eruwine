@@ -67,8 +67,8 @@ LOCALE="ja_JP.UTF-8"
 # Sway Wayland Focus Target
 SWAY_FOCUS_TARGETS=("Fate.exe" "Fate/stay night")
 
-# Wineprefix storage folder name
-WINE_PREFIX_NAME="fate"
+# Wine Prefix Configuration (Defaults to portable $GAMEDIR/wineprefix)
+# WINE_PREFIX_NAME="fate" # (Optional) Uncomment to share a global prefix under /storage/eruwine-prefixes/
 ```
 
 ---

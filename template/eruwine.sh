@@ -101,7 +101,8 @@ WINE_RENDERER="${WINE_RENDERER:-gl}"
 LOCALE="${LOCALE:-ko_KR.UTF-8}"
 DLL_OVERRIDES="${DLL_OVERRIDES:-mscoree,mshtml=;quartz,devenum,wmp=builtin,native;xaudio2_7,xaudio2_0=builtin}"
 GPTK_FILE="${GPTK_FILE:-keymap.gptk}"
-WINE_PREFIX_NAME="${WINE_PREFIX_NAME:-$GAME_ID}"
+# WINE_PREFIX_NAME is optional (for legacy global /storage/eruwine-prefixes/ compatibility)
+# Default behavior is local portable wineprefix inside $GAMEDIR/wineprefix
 
 echo "=================================================================="
 echo "Starting $GAME_NAME via Eruwine Framework"
@@ -190,7 +191,15 @@ export SWAYSOCK="${SWAYSOCK:-/var/run/0-runtime-dir/sway-ipc.0.sock}"
 export XKB_CONFIG_ROOT="/usr/share/X11/xkb"
 
 # --- Wine Settings & Locale ---
-export WINEPREFIX="/storage/eruwine-prefixes/$WINE_PREFIX_NAME"
+# Default to local portable wineprefix inside GAMEDIR ($GAMEDIR/wineprefix).
+# Can be overridden by WINEPREFIX_PATH or legacy WINE_PREFIX_NAME.
+if [ -n "$WINEPREFIX_PATH" ]; then
+  export WINEPREFIX="$WINEPREFIX_PATH"
+elif [ -n "$WINE_PREFIX_NAME" ]; then
+  export WINEPREFIX="/storage/eruwine-prefixes/$WINE_PREFIX_NAME"
+else
+  export WINEPREFIX="$GAMEDIR/wineprefix"
+fi
 export WINEARCH=win64
 export WINEDEBUG="-all"
 export LC_ALL="$LOCALE"
