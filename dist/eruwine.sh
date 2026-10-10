@@ -214,7 +214,7 @@ if [ ! -d "$WINEPREFIX/drive_c" ]; then
 fi
 
 mkdir -p "$WINEPREFIX/dosdevices"
-[ ! -L "$WINEPREFIX/dosdevices/z:" ] && ln -sf / "$WINEPREFIX/dosdevices/z:"
+rm -f "$WINEPREFIX/dosdevices/z:" 2>/dev/null || true
 [ ! -L "$WINEPREFIX/dosdevices/d:" ] && ln -sf "$GAMEDIR/game" "$WINEPREFIX/dosdevices/d:"
 
 if [ -d "/usr/lib/wine/i386-windows" ] && [ -d "$WINEPREFIX/drive_c/windows/syswow64" ]; then
@@ -318,5 +318,6 @@ cd "$GAMEDIR/game"
 echo "[INFO] Executing: wine $TARGET_EXE"
 wine "$TARGET_EXE"
 
+rm -f "$WINEPREFIX/dosdevices/z:" 2>/dev/null || true
 echo "[INFO] Game process terminated normally."
 exit 0
